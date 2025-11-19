@@ -1,16 +1,12 @@
 from datetime import datetime
 
-# "Base de datos" temporal en memoria
+# Base de datos temporal en memoria
 pedidos = []
 id_actual = 1
 
 # FUNCIÓN: Registrar un pedido
-def registrar_pedido(cliente, items, total):
-    """
-    Crea un nuevo pedido y lo guarda en memoria.
-    """
+def registrar_pedido(cliente, items, total): 
     global id_actual
-
     pedido = {
         "id": id_actual,
         "cliente": cliente,
@@ -28,9 +24,6 @@ def registrar_pedido(cliente, items, total):
 
 # FUNCIÓN: Cancelar un pedido por ID
 def cancelar_pedido(id_pedido):
-    """
-    Cambia el estado del pedido a 'cancelado' si existe.
-    """
     for pedido in pedidos:
         if pedido["id"] == id_pedido:
             pedido["estado"] = "cancelado"
@@ -41,9 +34,6 @@ def cancelar_pedido(id_pedido):
 
 # FUNCIÓN: Confirmar pago de un pedido
 def confirmar_pago(id_pedido):
-    """
-    Marca un pedido como pagado y cambia su estado.
-    """
     for pedido in pedidos:
         if pedido["id"] == id_pedido:
             pedido["pagado"] = True
@@ -54,9 +44,6 @@ def confirmar_pago(id_pedido):
 
 # FUNCIÓN: Listar todos los pedidos
 def listar_pedidos():
-    """
-    Devuelve la lista completa de pedidos registrados.
-    """
     return pedidos
 
 # MENÚ DE CONSOLA
@@ -110,3 +97,4 @@ def ejecutar_consola():
 
 if __name__ == "__main__":
     ejecutar_consola()
+
