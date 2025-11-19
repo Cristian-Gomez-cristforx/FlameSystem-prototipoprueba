@@ -95,6 +95,4 @@ def ejecutar_consola():
         else:
             print("Opción no válida.")
 
-if __name__ == "__main__":
     ejecutar_consola()
-
