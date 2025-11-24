@@ -155,7 +155,7 @@ def menu():
 3. Mostrar inventario
 4. Ver detalles de un producto
 5. Registrar insumo
-6. Registrar bebida (herencia)
+6. Registrar bebida
 7. Ver insumos
 8. Ver bebidas
 9. Salir
