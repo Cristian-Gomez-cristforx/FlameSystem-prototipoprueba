@@ -1,12 +1,16 @@
 from datetime import datetime
 
-#  CLASE PEDIDO
+# ================= CLASE PEDIDO =================
 class Pedido:
-    def _init_(self, id_pedido, cliente, items, total):
+    def __init__(self, id_pedido, cliente, items, total, tipo_entrega):
         self.id = id_pedido
         self.cliente = cliente
         self.items = items
         self.total = total
+        
+        # Tipo de entrega del pedido
+        self.tipo_entrega = tipo_entrega  # mesa, domicilio o recogida
+
         self.estado = "creado"
         self.pagado = False
         self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -19,18 +23,22 @@ class Pedido:
         self.pagado = True
         self.estado = "pagado"
 
-    def _str_(self):
-        return f"ID: {self.id} | Cliente: {self.cliente} | Total: {self.total} | Estado: {self.estado} | Pagado: {self.pagado} | Fecha: {self.fecha}"
+    def __str__(self):
+        return (
+            f"ID: {self.id} | Cliente: {self.cliente} | Total: {self.total} | "
+            f"Entrega: {self.tipo_entrega} | Estado: {self.estado} | "
+            f"Pagado: {self.pagado} | Fecha: {self.fecha}"
+        )
 
 
-#  CLASE GESTOR DE PEDIDOS
+# ================= GESTOR DE PEDIDOS =================
 class GestorPedidos:
-    def _init_(self):
+    def __init__(self):
         self.pedidos = []
         self.id_actual = 1
 
-    def registrar_pedido(self, cliente, items, total):
-        pedido = Pedido(self.id_actual, cliente, items, total)
+    def registrar_pedido(self, cliente, items, total, tipo_entrega):
+        pedido = Pedido(self.id_actual, cliente, items, total, tipo_entrega)
         self.pedidos.append(pedido)
         self.id_actual += 1
         return pedido
@@ -59,9 +67,9 @@ class GestorPedidos:
         return None
 
 
-#  MENÚ DE CONSOLA
+# ================= SISTEMA POR CONSOLA =================
 class SistemaConsola:
-    def _init_(self):
+    def __init__(self):
         self.gestor = GestorPedidos()
 
     def mostrar_menu(self):
@@ -82,33 +90,48 @@ class SistemaConsola:
                 cliente = input("Nombre del cliente: ")
                 items = input("Items (separados por coma): ").split(",")
                 total = int(input("Valor total del pedido: "))
-                pedido = self.gestor.registrar_pedido(cliente, items, total)
+
+                # Pedir tipo de entrega
+                print("\nTipo de entrega:")
+                print("1. Mesa")
+                print("2. Domicilio")
+                print("3. Recogida")
+                tipo = input("Seleccione opción: ")
+
+                if tipo == "1":
+                    tipo_entrega = "mesa"
+                elif tipo == "2":
+                    tipo_entrega = "domicilio"
+                elif tipo == "3":
+                    tipo_entrega = "recogida"
+                else:
+                    print("Opción inválida. Se asignará 'mesa' por defecto.")
+                    tipo_entrega = "mesa"
+
+                pedido = self.gestor.registrar_pedido(cliente, items, total, tipo_entrega)
                 print("Pedido registrado:", pedido)
 
-            # Cancelar pedido
             elif opcion == "2":
                 id_pedido = int(input("ID del pedido a cancelar: "))
                 resultado = self.gestor.cancelar_pedido(id_pedido)
                 print("Resultado:", resultado if resultado else "Pedido no encontrado")
 
-            # Confirmar pago
             elif opcion == "3":
                 id_pedido = int(input("ID del pedido a confirmar pago: "))
                 resultado = self.gestor.confirmar_pago(id_pedido)
                 print("Resultado:", resultado if resultado else "Pedido no encontrado")
 
-            # Listar pedidos
             elif opcion == "4":
                 print("\n--- Lista de pedidos ---")
                 for p in self.gestor.listar_pedidos():
                     print(p)
 
-            # Salir
             elif opcion == "5":
                 print("Saliendo del sistema...")
                 break
 
             else:
                 print("Opción no válida.")
+
 
 SistemaConsola().ejecutar()
