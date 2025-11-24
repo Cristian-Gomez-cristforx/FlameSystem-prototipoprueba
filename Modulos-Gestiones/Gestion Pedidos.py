@@ -34,37 +34,42 @@ class Pedido:
 # ================= GESTOR DE PEDIDOS =================
 class GestorPedidos:
     def __init__(self):
-        self.pedidos = []
+        self.pedidos = {}
         self.id_actual = 1
 
+    # Registrar pedido
     def registrar_pedido(self, cliente, items, total, tipo_entrega):
         pedido = Pedido(self.id_actual, cliente, items, total, tipo_entrega)
-        self.pedidos.append(pedido)
+
+        # GUARDAR EN DICCIONARIO
+        self.pedidos[self.id_actual] = pedido
+
         self.id_actual += 1
         return pedido
 
+    # Cancelar pedido
     def cancelar_pedido(self, id_pedido):
-        pedido = self.buscar_pedido(id_pedido)
+        pedido = self.pedidos.get(id_pedido)
         if pedido:
             pedido.cancelar()
             return pedido
         return None
 
+    # Confirmar pago
     def confirmar_pago(self, id_pedido):
-        pedido = self.buscar_pedido(id_pedido)
+        pedido = self.pedidos.get(id_pedido)
         if pedido:
             pedido.confirmar_pago()
             return pedido
         return None
 
+    # Listar pedidos
     def listar_pedidos(self):
-        return self.pedidos
+        return self.pedidos.values()  # Retorna solo los objetos Pedido
 
+    # Buscar pedido
     def buscar_pedido(self, id_pedido):
-        for pedido in self.pedidos:
-            if pedido.id == id_pedido:
-                return pedido
-        return None
+        return self.pedidos.get(id_pedido, None)
 
 
 # ================= SISTEMA POR CONSOLA =================
@@ -135,3 +140,4 @@ class SistemaConsola:
 
 
 SistemaConsola().ejecutar()
+
