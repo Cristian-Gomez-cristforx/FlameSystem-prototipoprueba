@@ -2,15 +2,15 @@ from datetime import datetime
 
 # ================= CLASE PEDIDO =================
 class Pedido:
-    def __init__(self, id_pedido, cliente, items, total, tipo_entrega):
+    def __init__(self, id_pedido, cliente, total, tipo_entrega):
         self.id = id_pedido
         self.cliente = cliente
-        self.items = items
-        self.total = total
         
-        # Tipo de entrega del pedido
-        self.tipo_entrega = tipo_entrega  # mesa, domicilio o recogida
+        # LISTA VACÍA
+        self.items = []  
 
+        self.total = total
+        self.tipo_entrega = tipo_entrega
         self.estado = "creado"
         self.pagado = False
         self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -34,20 +34,18 @@ class Pedido:
 # ================= GESTOR DE PEDIDOS =================
 class GestorPedidos:
     def __init__(self):
-        self.pedidos = {}
+        self.pedidos = {} 
         self.id_actual = 1
 
-    # Registrar pedido
-    def registrar_pedido(self, cliente, items, total, tipo_entrega):
-        pedido = Pedido(self.id_actual, cliente, items, total, tipo_entrega)
+    def registrar_pedido(self, cliente, total, tipo_entrega):
+        pedido = Pedido(self.id_actual, cliente, total, tipo_entrega)
 
-        # GUARDAR EN DICCIONARIO
+        # Guardar en diccionario
         self.pedidos[self.id_actual] = pedido
-
         self.id_actual += 1
+
         return pedido
 
-    # Cancelar pedido
     def cancelar_pedido(self, id_pedido):
         pedido = self.pedidos.get(id_pedido)
         if pedido:
@@ -55,7 +53,6 @@ class GestorPedidos:
             return pedido
         return None
 
-    # Confirmar pago
     def confirmar_pago(self, id_pedido):
         pedido = self.pedidos.get(id_pedido)
         if pedido:
@@ -63,11 +60,9 @@ class GestorPedidos:
             return pedido
         return None
 
-    # Listar pedidos
     def listar_pedidos(self):
-        return self.pedidos.values()  # Retorna solo los objetos Pedido
+        return self.pedidos.values()
 
-    # Buscar pedido
     def buscar_pedido(self, id_pedido):
         return self.pedidos.get(id_pedido, None)
 
@@ -90,13 +85,11 @@ class SistemaConsola:
         while True:
             opcion = self.mostrar_menu()
 
-            # Registrar pedido
+            # Registrar nuevo pedido
             if opcion == "1":
                 cliente = input("Nombre del cliente: ")
-                items = input("Items (separados por coma): ").split(",")
                 total = int(input("Valor total del pedido: "))
 
-                # Pedir tipo de entrega
                 print("\nTipo de entrega:")
                 print("1. Mesa")
                 print("2. Domicilio")
@@ -110,10 +103,10 @@ class SistemaConsola:
                 elif tipo == "3":
                     tipo_entrega = "recogida"
                 else:
-                    print("Opción inválida. Se asignará 'mesa' por defecto.")
+                    print("Opción no válida, se asignará 'mesa'.")
                     tipo_entrega = "mesa"
 
-                pedido = self.gestor.registrar_pedido(cliente, items, total, tipo_entrega)
+                pedido = self.gestor.registrar_pedido(cliente, total, tipo_entrega)
                 print("Pedido registrado:", pedido)
 
             elif opcion == "2":
@@ -139,5 +132,5 @@ class SistemaConsola:
                 print("Opción no válida.")
 
 
+# Ejecutar sistema
 SistemaConsola().ejecutar()
-
