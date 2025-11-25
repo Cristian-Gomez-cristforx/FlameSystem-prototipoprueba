@@ -19,220 +19,149 @@ Este repositorio contiene una versión prototipo enfocada en pruebas y desarroll
 ---
 ---
 
-## Instalación y ejecución
+MÓDULO: INVENTARIO
 
-### Clonar el repositorio  
-```bash
-git clone https://github.com/Cristian-Gomez-cristforx/FlameSystem-prototipoprueba.git
-cd FlameSystem-prototipoprueba
+1. Registrar Insumo
+Como administrador, quiero registrar insumos con nombre, cantidad y precio para controlar los recursos del restaurante.
 
-## Historias de usuario
- 1.Inventario
-01 — Registrar insumos
+2. Actualizar Cantidad de Insumo
+Como administrador, quiero aumentar o disminuir la cantidad de un insumo para mantener el inventario actualizado.
 
-Como administrador del restaurante
-Quiero registrar nuevos insumos con nombre, cantidad y precio
-Para mantener un control claro de los recursos disponibles.
+3. Eliminar Insumo
+Como administrador, quiero eliminar un insumo que ya no uso para mantener limpio el inventario.
 
-Criterios de aceptación:
+4. Registrar Producto
+Como administrador, quiero registrar un producto con precio, cantidad y sus ingredientes para venderlo en el POS.
 
-Se debe poder ingresar nombre, cantidad y precio.
+5. Actualizar Producto
+Como administrador, quiero actualizar precio, stock o ingredientes de un producto para mantenerlo actualizado.
 
-Si falta un dato obligatorio → mostrar error.
+6. Eliminar Producto
+Como administrador, quiero eliminar productos que ya no se venden para mantener la carta limpia.
 
-El insumo se debe guardar en el inventario.
+7. Listar Insumos
+Como usuario, quiero ver todos los insumos registrados para revisar el stock disponible.
 
-No se deben permitir insumos repetidos.
+8. Listar Productos
+Como usuario, quiero ver todos los productos para conocer su disponibilidad.
 
-- Actualizar cantidad de insumos
+9. Ver Detalles de Producto
+Como administrador, quiero ver precio, stock e ingredientes del producto para gestionarlo fácilmente.
 
-Como encargado de inventario
-Quiero modificar la cantidad existente de un insumo
-Para mantener actualizado el stock real.
+10. Alertas de Stock Bajo
+Como administrador, quiero recibir alertas cuando un insumo esté bajo para poder reabastecer.
 
-Criterios de aceptación:
 
-Permite aumentar o disminuir cantidad.
 
-No permite dejar stock negativo.
+MÓDULO: VENTAS / POS
 
-Muestra mensaje confirmando actualización.
+11. Iniciar Venta
+Como cajero, quiero iniciar una venta para registrar el pedido de un cliente.
 
-HU-INV-003 — Mostrar inventario completo
+12. Agregar Productos
+Como cajero, quiero agregar productos a una venta para construir el pedido del cliente.
 
-Como usuario del sistema
-Quiero ver un listado con todos los insumos y sus cantidades
-Para conocer qué recursos hay disponibles.
+13. Calcular Total Automático
+Como cajero, quiero que el sistema calcule automáticamente subtotal, IVA y total para agilizar la venta.
 
-Criterios de aceptación:
+14. Eliminar Ítems 
+Como cajero, quiero eliminar productos para corregir errores del pedido.
 
-Mostrar nombre, cantidad y precio de cada insumo.
+15. Aplicar Descuentos
+Como cajero, quiero aplicar cupones o descuentos manuales para promociones especiales.
 
-El listado debe ser legible.
+16. Registrar Método de Pago
+Como cajero, quiero registrar si la venta es en efectivo, tarjeta, Nequi o Daviplata.
 
-Si no hay insumos → mostrar mensaje “Inventario vacío”.
+17. Confirmar Venta y Generar Recibo
+Como cajero, quiero completar la venta y que el sistema genere un recibo para el cliente.
 
-HU-INV-004 — Descontar insumos usados en productos
+18. Descontar Insumos al Pagar
+Como sistema, quiero descontar los insumos usados únicamente cuando la venta se paga.
 
-Como sistema POS
-Quiero descontar automáticamente los insumos usados cuando se vende un producto
-Para mantener el inventario exacto.
+19. Cancelar Venta
+Como cajero, quiero cancelar una venta antes de pagar si el cliente se arrepiente.
 
-Criterios de aceptación:
 
-El descuento solo ocurre cuando la venta se confirma/paga.
 
-No descuenta en pruebas o simulaciones.
+MÓDULO: USUARIOS Y ROLES
 
-Si no hay suficiente inventario → impedir la venta.
+20. Registrar Usuario
+Como administrador, quiero registrar usuarios para que puedan acceder al sistema.
 
-🍔 2. Gestión de Productos
-HU-PRO-001 — Registrar productos
+21. Asignar Roles
+Como administrador, quiero asignar roles como Cajero, Administrador o Cocinero para controlar permisos.
 
-Como administrador
-Quiero crear nuevos productos indicando ingredientes e insumos
-Para ofrecerlos en el menú.
+22. Login Seguro
+Como usuario, quiero acceder con usuario y contraseña para entrar a mis funciones.
 
-Criterios de aceptación:
+23. Recuperar Contraseña
+Como usuario, quiero recuperar mi contraseña si la olvido para volver a iniciar sesión.
 
-Permite registrar nombre, precio, cantidad y lista de ingredientes.
+24. Ver Perfil
+Como usuario, quiero ver mis datos para confirmar mi información.
 
-Validar que los insumos existan en el inventario.
+25. Cerrar Sesión
+Como usuario, quiero cerrar sesión para proteger mi cuenta.
 
-Producto no se registra si falta información.
 
-HU-PRO-002 — Actualizar productos
 
-Como administrador
-Quiero editar el nombre, precio, cantidad o ingredientes de un producto
-Para mantener actualizado el menú.
+MÓDULO: COCINA
 
-Criterios de aceptación:
+26. Ver Pedidos Pendientes
+Como cocinero, quiero ver las órdenes que están en preparación para empezar a cocinar.
 
-No permite duplicar productos.
+27. Actualizar Estado del Pedido
+Como cocinero, quiero marcar un pedido como "En preparación", "Listo" o "Entregado".
 
-Permite modificar ingredientes.
+28. Ver Ingredientes por Pedido
+Como cocinero, quiero saber los ingredientes necesarios para cada producto.
 
-Guarda cambios correctamente.
 
-HU-PRO-003 — Mostrar productos existentes
 
-Como usuario del sistema
-Quiero ver una lista de los productos registrados
-Para conocer la oferta disponible para ventas.
+MÓDULO: REPORTES
 
-Criterios de aceptación:
+29. Reporte de Ventas por Día
+Como administrador, quiero ver cuánto vendí hoy para analizar ingresos diarios.
 
-Mostrar nombre, precio y disponibilidad.
+30. Reporte de Ventas por Mes
+Como administrador, quiero ver ventas mensuales para evaluar el rendimiento del negocio.
 
-Marcar productos sin inventario suficiente como “agotados”.
+31. Reporte de Productos Más Vendidos
+Como administrador, quiero saber qué productos son más populares.
 
-HU-PRO-004 — Calcular disponibilidad según inventario
+32. Reporte de Insumos Más Consumidos
+Como administrador, quiero ver cuáles insumos se usan más para planear compras.
 
-Como vendedor
-Quiero que el sistema muestre si un producto se puede vender según insumos disponibles
-Para evitar ventas de productos sin ingredientes.
+33. Exportar Reportes (PDF/Excel)
+Como administrador, quiero exportar los reportes en PDF o Excel para revisarlos.
 
-Criterios de aceptación:
 
-Comprobar disponibilidad antes de permitir venta.
 
-Mostrar razón si no se puede (ej: “Falta carne”).
+MÓDULO: CONFIGURACIÓN
 
-💵 3. Ventas / POS
-HU-VEN-001 — Registrar una venta
+34. Configurar Impuestos
+Como administrador, quiero configurar el IVA aplicado a mis ventas.
 
-Como cajero
-Quiero registrar una venta con uno o varios productos
-Para llevar el control diario de ventas.
+35. Configurar Stock Mínimo
+Como administrador, quiero ajustar el nivel que activa la alerta de insumo bajo.
 
-Criterios de aceptación:
+36. Configurar Datos del Restaurante
+Como administrador, quiero modificar nombre, NIT, dirección y teléfono para los recibos.
 
-Permite seleccionar productos y cantidades.
 
-Valida inventario antes de confirmar.
 
-Muestra total a pagar.
+MÓDULO: CAJA
 
-HU-VEN-002 — Confirmar/pagar la venta
+37. Apertura de Caja
+Como cajero, quiero ingresar el monto inicial de la caja para iniciar el turno.
 
-Como cliente/cajero
-Quiero que el sistema confirme el pago
-Para completar la transacción.
+38. Cierre de Caja
+Como cajero, quiero cerrar la caja al final del día y ver los totales generados.
 
-Criterios de aceptación:
+39. Registrar Ingresos Extras
+Como cajero, quiero registrar ingresos adicionales en caja (propinas, ajustes).
 
-Después de pagar → descontar insumos.
-
-Guardar datos de fecha, hora, total.
-
-Generar número de venta.
-
-HU-VEN-003 — Cancelar venta
-
-Como cajero
-Quiero poder cancelar una venta antes de pagar
-Para corregir errores sin afectar inventario.
-
-Criterios de aceptación:
-
-No descuenta insumos.
-
-Limpia los productos seleccionados.
-
-📊 4. Reportes
-HU-REP-001 — Reporte de ventas por día
-
-Como administrador
-Quiero ver las ventas del día con totales
-Para evaluar rendimiento.
-
-Criterios de aceptación:
-
-Mostrar número de ventas.
-
-Total vendido.
-
-Productos más vendidos.
-
-HU-REP-002 — Reporte de inventario crítico
-
-Como administrador
-Quiero ver los insumos con poca existencia
-Para planear compras.
-
-Criterios de aceptación:
-
-Mostrar insumos cuya cantidad sea < umbral.
-
-Debe permitir configurar el umbral.
-
-🧑‍💻 5. Administración del sistema
-HU-ADM-001 — Crear usuarios del sistema
-
-Como administrador
-Quiero registrar nuevos usuarios (cajeros, administradores)
-Para controlar el acceso al sistema.
-
-Criterios de aceptación:
-
-Registrar nombre, usuario y contraseña.
-
-Permitir roles.
-
-Validar contraseñas seguras.
-
-HU-ADM-002 — Iniciar sesión
-
-Como usuario del sistema
-Quiero iniciar sesión con un usuario y contraseña
-Para acceder a mis herramientas.
-
-Criterios de aceptación:
-
-Mostrar error si las credenciales son incorrectas.
-
-Redirigir según rol.
-
-
+40. Registrar Egresos
+Como cajero, quiero registrar pagos como domicilios o compras urgentes.
 
