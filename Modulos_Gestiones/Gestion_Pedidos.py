@@ -1,51 +1,46 @@
-from datetime import datetime
-
-# ================= CLASE PEDIDO =================
+# Clase Pedido
 class Pedido:
     def __init__(self, id_pedido, cliente, total, tipo_entrega):
-        self.id = id_pedido
+        self.id_pedido = id_pedido
         self.cliente = cliente
-        
-        # LISTA VACÍA
-        self.items = []  
-
+        self.items = []  # LISTA VACÍA
         self.total = total
         self.tipo_entrega = tipo_entrega
-        self.estado = "creado"
-        self.pagado = False
-        self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    def cancelar(self):
-        self.estado = "cancelado"
-        self.pagado = False
+        self.estado = "Pendiente"
+        self.pago_confirmado = False
 
     def confirmar_pago(self):
-        self.pagado = True
-        self.estado = "pagado"
+        self.pago_confirmado = True
+        self.estado = "Pagado"
+
+    def cancelar(self):
+        self.estado = "Cancelado"
 
     def __str__(self):
         return (
-            f"ID: {self.id} | Cliente: {self.cliente} | Total: {self.total} | "
-            f"Entrega: {self.tipo_entrega} | Estado: {self.estado} | "
-            f"Pagado: {self.pagado} | Fecha: {self.fecha}"
+            f"ID Pedido: {self.id_pedido}, Cliente: {self.cliente}, "
+            f"Estado: {self.estado}, Pago confirmado: {self.pago_confirmado}, "
+            f"Tipo entrega: {self.tipo_entrega}, Total: ${self.total}"
         )
 
 
-# ================= GESTOR DE PEDIDOS =================
+# ----------------------------------------------------------------------
+# Clase GestorPedidos
+# ----------------------------------------------------------------------
+
 class GestorPedidos:
     def __init__(self):
-        self.pedidos = {} 
+        self.pedidos = {}   
         self.id_actual = 1
 
+    # Registrar pedido
     def registrar_pedido(self, cliente, total, tipo_entrega):
         pedido = Pedido(self.id_actual, cliente, total, tipo_entrega)
-
-        # Guardar en diccionario
         self.pedidos[self.id_actual] = pedido
         self.id_actual += 1
-
         return pedido
 
+    # Cancelar pedido
     def cancelar_pedido(self, id_pedido):
         pedido = self.pedidos.get(id_pedido)
         if pedido:
@@ -53,6 +48,7 @@ class GestorPedidos:
             return pedido
         return None
 
+    # Confirmar pago
     def confirmar_pago(self, id_pedido):
         pedido = self.pedidos.get(id_pedido)
         if pedido:
@@ -60,77 +56,91 @@ class GestorPedidos:
             return pedido
         return None
 
+    # Listar pedidos
     def listar_pedidos(self):
         return self.pedidos.values()
 
+    # Buscar pedido
     def buscar_pedido(self, id_pedido):
         return self.pedidos.get(id_pedido, None)
 
 
-# ================= SISTEMA POR CONSOLA =================
-class SistemaConsola:
-    def __init__(self):
-        self.gestor = GestorPedidos()
+# ----------------------------------------------------------------------
+# Consola                              
+# ----------------------------------------------------------------------
 
-    def mostrar_menu(self):
-        print("\n=== GESTIÓN DE PEDIDOS (Flameburg.co) ===")
+def menu():
+    gestor = GestorPedidos()
+
+    while True:
+        print("\n--- Menú de Pedidos ---")
         print("1. Registrar pedido")
         print("2. Cancelar pedido")
         print("3. Confirmar pago")
-        print("4. Visualizar pedidos")
-        print("5. Salir")
-        return input("Seleccione una opción: ")
+        print("4. Listar pedidos")
+        print("5. Buscar pedido por ID")
+        print("6. Salir")
 
-    def ejecutar(self):
-        while True:
-            opcion = self.mostrar_menu()
+        opcion = input("Seleccione una opción: ")
 
-            # Registrar nuevo pedido
-            if opcion == "1":
-                cliente = input("Nombre del cliente: ")
-                total = int(input("Valor total del pedido: "))
+        if opcion == "1":
+            cliente = input("Nombre del cliente: ")
+            total = float(input("Total del pedido: $ "))
 
-                print("\nTipo de entrega:")
-                print("1. Mesa")
-                print("2. Domicilio")
-                print("3. Recogida")
-                tipo = input("Seleccione opción: ")
+            # Tipo de entrega
+            print("\nTipo de entrega:")
+            print("1. Mesa")
+            print("2. A domicilio")
+            print("3. Recogida")
+            tipo = input("Seleccione una opción: ")
 
-                if tipo == "1":
-                    tipo_entrega = "mesa"
-                elif tipo == "2":
-                    tipo_entrega = "domicilio"
-                elif tipo == "3":
-                    tipo_entrega = "recogida"
-                else:
-                    print("Opción no válida, se asignará 'mesa'.")
-                    tipo_entrega = "mesa"
-
-                pedido = self.gestor.registrar_pedido(cliente, total, tipo_entrega)
-                print("Pedido registrado:", pedido)
-
-            elif opcion == "2":
-                id_pedido = int(input("ID del pedido a cancelar: "))
-                resultado = self.gestor.cancelar_pedido(id_pedido)
-                print("Resultado:", resultado if resultado else "Pedido no encontrado")
-
-            elif opcion == "3":
-                id_pedido = int(input("ID del pedido a confirmar pago: "))
-                resultado = self.gestor.confirmar_pago(id_pedido)
-                print("Resultado:", resultado if resultado else "Pedido no encontrado")
-
-            elif opcion == "4":
-                print("\n--- Lista de pedidos ---")
-                for p in self.gestor.listar_pedidos():
-                    print(p)
-
-            elif opcion == "5":
-                print("Saliendo del sistema...")
-                break
-
+            if tipo == "1":
+                tipo_entrega = "Mesa"
+            elif tipo == "2":
+                tipo_entrega = "Domicilio"
+            elif tipo == "3":
+                tipo_entrega = "Recogida"
             else:
-                print("Opción no válida.")
+                print("Opción inválida. Se asignará: Mesa")
+                tipo_entrega = "Mesa"
 
+            pedido = gestor.registrar_pedido(cliente, total, tipo_entrega)
+            print(f"\nPedido registrado con ID: {pedido.id_pedido}")
 
-# Ejecutar sistema
-SistemaConsola().ejecutar()
+        elif opcion == "2":
+            id_pedido = int(input("ID del pedido a cancelar: "))
+            pedido = gestor.cancelar_pedido(id_pedido)
+            if pedido:
+                print("Pedido cancelado.")
+            else:
+                print("Pedido no encontrado.")
+
+        elif opcion == "3":
+            id_pedido = int(input("ID del pedido a confirmar pago: "))
+            pedido = gestor.confirmar_pago(id_pedido)
+            if pedido:
+                print("Pago confirmado.")
+            else:
+                print("Pedido no encontrado.")
+
+        elif opcion == "4":
+            print("\n--- Lista de Pedidos ---")
+            for pedido in gestor.listar_pedidos():
+                print(pedido)
+
+        elif opcion == "5":
+            id_pedido = int(input("ID del pedido: "))
+            pedido = gestor.buscar_pedido(id_pedido)
+            if pedido:
+                print(pedido)
+            else:
+                print("Pedido no encontrado.")
+
+        elif opcion == "6":
+            print("Saliendo...")
+            break
+
+        else:
+            print("Opción inválida.")
+
+menu()
