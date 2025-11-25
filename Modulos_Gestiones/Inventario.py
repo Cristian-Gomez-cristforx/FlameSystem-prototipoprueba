@@ -1,5 +1,6 @@
 class Insumo:
-    def __init__(self, nombre, cantidad, precio):
+    def __init__(self,id_insumo,nombre,cantidad,precio):
+        self.id_insumo= id_insumo
         self.nombre = nombre
         self.cantidad = cantidad
         self.precio = precio
@@ -20,7 +21,8 @@ class Bebida(Insumo):
 
 
 class Producto:
-    def __init__(self, nombre, cantidad, precio, ingredientes=None):
+    def __init__(self,id_producto, nombre, cantidad, precio, ingredientes=None):
+        self.id_producto=id_producto
         self.nombre = nombre
         self.cantidad = cantidad
         self.precio = precio
@@ -36,16 +38,25 @@ class Producto:
 class Inventario:
     def __init__(self):
         self.productos = {}
+        self.id_producto_actual = 1
         self.insumos = {}
+        self.id_insumo_actual = 1
         self.bebidas = {}
 
     def registrar_insumo(self, nombre, cantidad, precio):
-        if nombre in self.insumos:
-            print("Este insumo ya existe.")
-            return
+        nombre_normalizado = nombre.strip().lower()#Para comparar el nombre quitandio espacio demas, qe puedan hacer que sea diferente
+        #aunque se escriban iguales
+        for insumo_existente in self.insumos.values():#Me va buscar los valores de mi diccionario insumos, osea cada objeto insumo.
+            if insumo_existente.nombre.strip().lower() == nombre_normalizado:#aca hago la validacion  con los nombre limpios, para que sea exacto.
+               print(f" ¡ERROR!: Ya existe un insumo registrado con el nombre: {nombre}.")
+               return None
+        
+        nuevo_insumo = Insumo(self.id_insumo_actual, nombre, cantidad, precio) 
+        self.insumos[self.id_insumo_actual]= nuevo_insumo#Guardo el el ID como la clave del insumo.
+        self.id_insumo_actual +=1
 
-        self.insumos[nombre] = Insumo(nombre, cantidad, precio)
-        print(f"Insumo '{nombre}' registrado correctamente.")
+        print(f"✅ Insumo '{nombre}' registrado con ID: {nuevo_insumo.id_insumo}.")
+        return nuevo_insumo
 
     def registrar_bebida(self, nombre, cantidad, precio):
         if nombre in self.bebidas:
@@ -143,9 +154,9 @@ def pedir_float(texto):
         except ValueError:
             print("Error: ingrese un número válido.")
 
-
+inventario = Inventario()
 def menu():
-    inventario = Inventario()
+   
 
     while True:
         print("""
