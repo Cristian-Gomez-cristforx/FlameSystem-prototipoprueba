@@ -199,7 +199,7 @@ def pedir_float(texto):
 inventario = Inventario()
 
 
-def menu():
+def menu_inventario(inventario):
     while True:
         print("""
 ========== MENÚ INVENTARIO ==========
@@ -284,7 +284,6 @@ def menu():
             print("Opción no válida. Intente otra vez.")
 
 
-if __name__ == "__main__":
-    menu()
+
 
 
