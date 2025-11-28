@@ -10,8 +10,8 @@ class Insumo:
 
 
 class Bebida(Insumo):
-    def __init__(self, id_insumo, nombre, cantidad, precio, tipo_bebida, tamanio):
-        super().__init__(id_insumo, nombre, cantidad, precio)
+    def __init__(self, id_bebida, nombre, cantidad, precio, tipo_bebida, tamanio):
+        super().__init__(id_bebida, nombre, cantidad, precio)
         self.tipo_bebida = tipo_bebida
         self.tamanio = tamanio
 
@@ -25,7 +25,6 @@ class Producto:
         self.id_producto = id_producto
         self.nombre = nombre
         self.precio = precio
-        # ingredientes_ids es una lista de IDs de insumos (enteros)
         self.ingredientes = ingredientes_ids if ingredientes_ids else {}
     
 
@@ -35,14 +34,15 @@ class Producto:
 
 class Inventario:
     def __init__(self):
-        # productos: id_producto -> Producto
+        
         self.productos = {}
         self.id_producto_actual = 1
-        # insumos: id_insumo -> Insumo o Bebida
+        
         self.insumos = {}
         self.id_insumo_actual = 1
-        # bebidas: id_insumo -> Bebida (apunta a los mismos objetos que insumos)
+        
         self.bebidas = {}
+        self.id_bebida_actual = 1
 
     # registrar un insumo normal
     def registrar_insumo(self, nombre, cantidad, precio):
@@ -60,7 +60,7 @@ class Inventario:
         print(f"Insumo '{nombre}' registrado con ID: {nuevo_id}.")
         return nuevo_insumo
 
-    # registrar bebida: se crea como Bebida y se guarda en insumos y bebidas
+   
     def registrar_bebida(self, nombre, cantidad, precio):
         nombre_normalizad = nombre.strip().lower()
         for bebida in self.bebidas.values():
@@ -71,10 +71,10 @@ class Inventario:
         tipo = input("Tipo de bebida: ").strip()
         tamanio = input("Tamaño (350ml/600ml/etc): ").strip()
 
-        nuevo_id = self.id_insumo_actual
+        nuevo_id = self.id_bebida_actual
         nueva_bebida = Bebida(nuevo_id, nombre, cantidad, precio, tipo, tamanio)
         self.bebidas[nuevo_id] = nueva_bebida
-        self.id_insumo_actual += 1
+        self.id_bebida_actual += 1
 
         print(f"Bebida '{nombre}' registrada con ID: {nuevo_id}.")
         return nueva_bebida
@@ -122,7 +122,7 @@ class Inventario:
                 if ing_id not in self.insumos:
                     print(" Ese insumo no existe.")
                     continue
-                cantidad_usada = int(input("Cantidad que usa este producto: "))
+                cantidad_usada = int(input("Cantidad  del insumo que usa este producto: "))
                 ingredientes[ing_id] = cantidad_usada
             except ValueError:
                 print("Ingrese un número válido.")
@@ -363,7 +363,7 @@ def menu_inventario(inventario):
         else:
             print("Opción no válida. Intente otra vez.")
 
-
+menu_inventario(inventario)
 
 
 
