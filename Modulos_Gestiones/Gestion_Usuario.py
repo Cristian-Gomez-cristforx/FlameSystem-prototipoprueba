@@ -69,9 +69,14 @@ class Usuario:
 def pedir_entero(texto):
     while True:
         try:
-            return int(input(texto))
+            numero = int(input(texto))
+            if numero < 0:
+                print("Error: Ingrese un número entero positivo.")
+                continue
+            return numero
         except ValueError:
             print("Error: Ingrese un número entero válido.")
+            
 def verificar_correo(text):
     while True:
         corre=input(text)

@@ -1,8 +1,5 @@
 from datetime import datetime
 
-# ======================================================
-#                   CLASE PEDIDO
-# ======================================================
 
 class Pedido:
     def __init__(self, id_pedido, cliente, total, tipo_entrega):
@@ -86,12 +83,11 @@ class GestorPedidos:
 # ======================================================
 #                 MENÚ EN CONSOLA
 # ======================================================
-
-class SistemaConsola:
-    def __init__(self):
-        self.gestor = GestorPedidos()
-
+gestor=GestorPedidos()
+if __name__ == "__main__":
+    
     def mostrar_menu(self):
+        
         print("\n=== SISTEMA DE PEDIDOS - Flameburg.co ===")
         print("1. Registrar pedido")
         print("2. Cancelar pedido")
@@ -101,11 +97,10 @@ class SistemaConsola:
         print("6. Visualizar pedidos pendientes (Cocinero)")
         print("7. Actualizar estado de un pedido")
         print("8. Salir")
-        return input("Seleccione una opción: ")
-
-    def ejecutar(self):
         while True:
-            opcion = self.mostrar_menu()
+            opcion=input("Seleccione una opción: ")
+
+
 
             # ---------------------------
             # Registrar pedido
@@ -129,7 +124,7 @@ class SistemaConsola:
 
                 tipo_entrega = tipos.get(tipo_op, "Mesa")
 
-                pedido = self.gestor.registrar_pedido(cliente, total, tipo_entrega)
+                pedido = gestor.registrar_pedido(cliente, total, tipo_entrega)
                 print("Pedido registrado:", pedido)
 
             # ---------------------------
@@ -142,7 +137,7 @@ class SistemaConsola:
                     print("ID inválido.")
                     continue
 
-                resultado = self.gestor.cancelar_pedido(id_pedido)
+                resultado = gestor.cancelar_pedido(id_pedido)
                 print("Resultado:", resultado if resultado else "Pedido no encontrado")
 
             # ---------------------------
@@ -155,7 +150,7 @@ class SistemaConsola:
                     print("ID inválido.")
                     continue
 
-                resultado = self.gestor.confirmar_pago(id_pedido)
+                resultado = gestor.confirmar_pago(id_pedido)
                 print("Resultado:", resultado if resultado else "Pedido no encontrado")
 
             # ---------------------------
@@ -163,7 +158,7 @@ class SistemaConsola:
             # ---------------------------
             elif opcion == "4":
                 print("\n--- Lista de pedidos ---")
-                for p in self.gestor.listar_pedidos():
+                for p in gestor.listar_pedidos():
                     print(p)
 
             # ---------------------------
@@ -176,7 +171,7 @@ class SistemaConsola:
                     print("ID inválido.")
                     continue
 
-                pedido = self.gestor.buscar_pedido(id_pedido)
+                pedido = gestor.buscar_pedido(id_pedido)
                 print(pedido if pedido else "Pedido no encontrado")
 
             # ---------------------------
@@ -184,7 +179,7 @@ class SistemaConsola:
             # ---------------------------
             elif opcion == "6":
                 print("\n--- Pedidos Pendientes ---")
-                pedidos = self.gestor.pedidos_para_cocinero()
+                pedidos = gestor.pedidos_para_cocinero()
 
                 if not pedidos:
                     print("No hay pedidos pendientes.")
@@ -220,7 +215,7 @@ class SistemaConsola:
                     print("Estado no válido.")
                     continue
 
-                pedido = self.gestor.actualizar_estado_pedido(id_pedido, nuevo_estado)
+                pedido = gestor.actualizar_estado_pedido(id_pedido, nuevo_estado)
                 print(pedido if pedido else "Pedido no encontrado")
 
             # ---------------------------
@@ -234,5 +229,5 @@ class SistemaConsola:
                 print("Opción no válida.")
 
 
-# EJECUTAR SISTEMA
-SistemaConsola().ejecutar()
+
+

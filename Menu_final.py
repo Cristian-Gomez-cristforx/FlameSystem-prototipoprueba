@@ -117,3 +117,5 @@ while True:
                      if menu_mesero(permitir_cerrar_sesion=True, usuario_nombre=usuario_login.nombre):
                         usuario_deicidio_salir = True
                         break
+                elif usuario_deicidio_salir:
+                     break

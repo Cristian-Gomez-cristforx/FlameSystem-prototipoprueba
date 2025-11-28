@@ -21,19 +21,16 @@ class Bebida(Insumo):
 
 
 class Producto:
-    def __init__(self, id_producto, nombre, cantidad, precio, ingredientes_ids=None):
+    def __init__(self, id_producto, nombre, precio, ingredientes_ids=None):
         self.id_producto = id_producto
         self.nombre = nombre
-        self.cantidad = cantidad
         self.precio = precio
         # ingredientes_ids es una lista de IDs de insumos (enteros)
-        self.ingredientes = ingredientes_ids if ingredientes_ids else []
-
-    def actualizar_cantidad(self, nueva_cantidad):
-        self.cantidad = nueva_cantidad
+        self.ingredientes = ingredientes_ids if ingredientes_ids else {}
+    
 
     def __str__(self):
-        return f"{self.id_producto} | {self.nombre} | Cantidad: {self.cantidad} | Precio: ${self.precio}"
+        return f"{self.id_producto} | {self.nombre}  | Precio: ${self.precio}"
 
 
 class Inventario:
@@ -49,9 +46,9 @@ class Inventario:
 
     # registrar un insumo normal
     def registrar_insumo(self, nombre, cantidad, precio):
-        nombre_normalizado = nombre.strip().lower()
+        nombre_normaliza = nombre.strip().lower()
         for insumo in self.insumos.values():
-            if insumo.nombre.strip().lower() == nombre_normalizado:
+            if insumo.nombre.strip().lower() == nombre_normaliza:
                 print(f"¡ERROR!: Ya existe un insumo registrado con el nombre: {nombre}.")
                 return None
 
@@ -65,10 +62,10 @@ class Inventario:
 
     # registrar bebida: se crea como Bebida y se guarda en insumos y bebidas
     def registrar_bebida(self, nombre, cantidad, precio):
-        nombre_normalizado = nombre.strip().lower()
-        for insumo in self.insumos.values():
-            if insumo.nombre.strip().lower() == nombre_normalizado:
-                print(f"¡ERROR!: Ya existe un insumo/bebida registrado con el nombre: {nombre}.")
+        nombre_normalizad = nombre.strip().lower()
+        for bebida in self.bebidas.values():
+            if bebida.nombre.strip().lower() == nombre_normalizad:
+                print(f"¡ERROR!: Ya existe una bebida registrada con el nombre: {nombre}.")
                 return None
 
         tipo = input("Tipo de bebida: ").strip()
@@ -76,7 +73,6 @@ class Inventario:
 
         nuevo_id = self.id_insumo_actual
         nueva_bebida = Bebida(nuevo_id, nombre, cantidad, precio, tipo, tamanio)
-        self.insumos[nuevo_id] = nueva_bebida
         self.bebidas[nuevo_id] = nueva_bebida
         self.id_insumo_actual += 1
 
@@ -102,67 +98,102 @@ class Inventario:
             print(bebida)
 
     # registrar producto con lista de IDs de insumos
-    def registrar_producto(self, nombre, cantidad, precio, ingredientes_ids):
-        # Validar que exista cada ID
-        faltantes = [ing for ing in ingredientes_ids if ing not in self.insumos]
-        if faltantes:
-            print("\nNo se puede crear el producto.")
-            print("Faltan estos insumos (IDs):")
-            for f in faltantes:
-                print(f"- {f}")
-            return None
-
-        # validar que no exista producto con mismo nombre
+    def registrar_producto(self, nombre, precio):
+        ingredientes = {}
         nombre_normalizado = nombre.strip().lower()
-        for p in self.productos.values():
-            if p.nombre.strip().lower() == nombre_normalizado:
-                print("¡ERROR!: Este producto ya existe.")
+        for producto in self.productos.values():
+            if producto.nombre.strip().lower() == nombre_normalizado:
+                print(f"¡ERROR!: Ya existe un producto registrado con el nombre: {nombre}.")
                 return None
+        
 
-        nuevo_id = self.id_producto_actual
-        nuevo_producto = Producto(nuevo_id, nombre, cantidad, precio, ingredientes_ids.copy())
-        self.productos[nuevo_id] = nuevo_producto
+        print("\n--- Lista de Insumos Disponibles ---")
+        for ins in self.insumos.values():
+            print(ins)
+
+        print("\nAgrega ingredientes al producto (por ID).")
+        print("Si no quieres agregar más, escribe 0.\n")
+
+        while True:
+            try:
+                ing_id = int(input("ID insumo: "))
+                if ing_id == 0:
+                    break
+                if ing_id not in self.insumos:
+                    print(" Ese insumo no existe.")
+                    continue
+                cantidad_usada = int(input("Cantidad que usa este producto: "))
+                ingredientes[ing_id] = cantidad_usada
+            except ValueError:
+                print("Ingrese un número válido.")
+                continue
+
+        nuevo = Producto(self.id_producto_actual, nombre, precio, ingredientes)
+        self.productos[self.id_producto_actual] = nuevo
+
+        print(f"\n✔ Producto '{nombre}' registrado con ID: {self.id_producto_actual}")
         self.id_producto_actual += 1
 
-        print(f"Producto '{nombre}' registrado correctamente con ID: {nuevo_id}.")
-        return nuevo_producto
-
-    def actualizar_producto(self, nombre_o_id, nueva_cantidad):
+    def actualizar_precio_producto(self, nombre_o_id, nuevo_precio):
+      # Buscar producto por nombre o por ID
         prod = self._buscar_producto_por_nombre_o_id(nombre_o_id)
+
         if not prod:
-            print("El producto no existe.")
-            return None
-        prod.actualizar_cantidad(nueva_cantidad)
-        print(f"Cantidad actualizada para '{prod.nombre}' (ID {prod.id_producto}).")
+          print("El producto no existe.")
+          return None
+
+        prod.precio = nuevo_precio
+        print(f"Precio actualizado para '{prod.nombre}' (ID {prod.id_producto}) → Nuevo precio: ${nuevo_precio}")
+    
         return prod
 
-    def mostrar_inventario(self):
-        if not self.productos:
-            print("Inventario vacío.")
-            return
-        print("\n--- Inventario Actual ---")
-        for producto in self.productos.values():
-            print(producto)
+    def mostrar_productos_y_detalles(self):
+    
+       if not self.productos:
+          print("No hay productos registrados.")
+          return
 
-    def detalles_producto(self, nombre_o_id):
-        prod = self._buscar_producto_por_nombre_o_id(nombre_o_id)
-        if not prod:
-            print("Ese producto no existe.")
-            return
+       print("\n--- Productos Registrados ---")
+       for p in self.productos.values():
+           print(p)   # asume que Producto.__str__ está bien definido
 
-        print(f"\n--- Detalles de {prod.nombre} (ID {prod.id_producto}) ---")
-        print(f"Cantidad disponible: {prod.cantidad}")
-        print(f"Precio: ${prod.precio}")
-        print("Ingredientes (ID - Nombre - Stock):")
-        if not prod.ingredientes:
-            print(" - (Sin ingredientes registrados)")
-            return
-        for ing_id in prod.ingredientes:
-            ins = self.insumos.get(ing_id)
-            if ins:
-                print(f" - {ing_id} | {ins.nombre} | Cantidad disponible: {ins.cantidad}")
-            else:
-                print(f" - {ing_id} | (INSUMO NO ENCONTRADO)")
+       entrada = input("\nIngrese NOMBRE o ID del producto para ver detalles (0 para cancelar): ").strip()
+       if entrada == "" or entrada == "0":
+          print("Operación cancelada.")
+          return
+
+       prod = self._buscar_producto_por_nombre_o_id(entrada)
+       if not prod:
+          print("Producto no encontrado.")
+          return
+
+       self.detalles_producto(prod.id_producto)
+
+    def detalles_producto(self, id_producto):
+    
+       if id_producto not in self.productos:
+          print("Ese producto no existe.")
+          return
+
+       p = self.productos[id_producto]
+
+       print(f"\n--- Detalles de {p.nombre} ---")
+       print(f"ID: {p.id_producto}")
+       print(f"Precio: ${p.precio}")
+
+       print("\nIngredientes:")
+       if not p.ingredientes:
+          print(" - Este producto no tiene ingredientes.")
+          return
+
+       for ing_id, cant in p.ingredientes.items():
+    
+           ins = self.insumos.get(ing_id, None)
+           if ins:
+              print(f" - {ins.nombre} (ID {ing_id}) -> Usa {cant} | Stock: {ins.cantidad}")
+           else:
+               print(f" - (INSUMO NO ENCONTRADO) (ID {ing_id}) -> Usa {cant}")
+                
 
     # helper para buscar por nombre (string) o por id (si el usuario ingresa un número)
     def _buscar_producto_por_nombre_o_id(self, nombre_o_id):
@@ -177,23 +208,91 @@ class Inventario:
                 if p.nombre.strip().lower() == target:
                     return p
         return None
+    
+
+    def actualizar_cantidad_bebida(self):
+        print("\n--- Actualizar Cantidad de Bebida ---")
+
+        if not self.bebidas:
+            print("No hay bebidas registradas.")
+            return
+
+        try:
+            beb_id = int(input("ID de la bebida: "))
+        except ValueError:
+            print("ID inválido.")
+            return
+
+        if beb_id not in self.bebidas:
+            print("Esa bebida no existe.")
+            return
+
+        beb = self.bebidas[beb_id]
+        print(f"Bebida: {beb.nombre} | Cantidad actual: {beb.cantidad}")
+
+        try:
+            nueva_cantidad = int(input("Nueva cantidad: "))
+        except ValueError:
+            print("Cantidad inválida.")
+            return
+
+        beb.cantidad = nueva_cantidad
+        print("✔ Cantidad actualizada correctamente.")
+
+
+
+    def actualizar_cantidad_insumo(self):
+        print("\n--- Actualizar Cantidad de Insumo ---")
+
+        if not self.insumos:
+            print("No hay insumos registrados.")
+            return
+
+        try:
+            ins_id = int(input("ID del insumo: "))
+        except ValueError:
+            print("ID inválido.")
+            return
+
+        if ins_id not in self.insumos:
+            print("Ese insumo no existe.")
+            return
+
+        ins = self.insumos[ins_id]
+        print(f"Insumo: {ins.nombre} | Cantidad actual: {ins.cantidad}")
+
+        try:
+            nueva_cantidad = int(input("Nueva cantidad: "))
+        except ValueError:
+            print("Cantidad inválida.")
+            return
+
+        ins.cantidad = nueva_cantidad
+        print("✔ Cantidad actualizada correctamente.")
 
 
 def pedir_entero(texto):
     while True:
         try:
-            return int(input(texto))
+            numero = int(input(texto))
+            if numero <=0:
+                print("Error: Ingrese un número entero positivo.")
+                continue
+            return numero
         except ValueError:
-            print("Error: ingrese un número entero válido.")
+            print("Error: Ingrese un número entero válido.")
 
 
 def pedir_float(texto):
     while True:
         try:
-            return float(input(texto))
+            numero = float(input(texto))
+            if numero <=0:
+                print("Error: Ingrese un número positivo.")
+                continue
+            return numero
         except ValueError:
-            print("Error: ingrese un número válido.")
-
+            print("Error: Ingrese un número decimal válido.")
 
 # instancia global
 inventario = Inventario()
@@ -204,82 +303,63 @@ def menu_inventario(inventario):
         print("""
 ========== MENÚ INVENTARIO ==========
 1. Registrar producto
-2. Actualizar cantidad de un producto
-3. Mostrar inventario
-4. Ver detalles de un producto
-5. Registrar insumo
-6. Registrar bebida
-7. Ver insumos
-8. Ver bebidas
-9. Salir
+2. Actualizar precio de un producto
+3. Mostrar productos y ver detalles
+4. Actualizar cantidad insumo
+5. Actualizar cantidad bebida
+6. Registrar Insumo
+7. Registrar Bebida
+8. Ver Insumos         
+9. Ver bebidas
+10. Salir
 """)
 
         opcion = input("Seleccione una opción: ").strip()
 
         if opcion == "1":
             nombre = input("Nombre del producto: ").strip()
-            cantidad = pedir_entero("Cantidad inicial: ")
             precio = pedir_float("Precio del producto: ")
 
-            if not inventario.insumos:
-                print("ERROR: No hay insumos registrados. Regístrelos primero.")
-                continue
-
-            # Mostrar insumos con ID para que el usuario elija
-            print("\n--- Insumos disponibles ---")
-            for insumo_id, insumo in inventario.insumos.items():
-                print(f"{insumo_id} - {insumo.nombre} (Cantidad: {insumo.cantidad})")
-
-            ingredientes_ids = []
-            while True:
-                ing_id = pedir_entero("Agrega ID de insumo (o '0' para terminar): ")
-                if ing_id == 0:
-                    break
-                if ing_id not in inventario.insumos:
-                    print("ID inválido, intenta de nuevo.")
-                    continue
-                # evitar duplicados en la lista de ingredientes del producto
-                if ing_id in ingredientes_ids:
-                    print("Ese insumo ya fue agregado al producto.")
-                    continue
-                ingredientes_ids.append(ing_id)
-
-            inventario.registrar_producto(nombre, cantidad, precio, ingredientes_ids)
+            inventario.registrar_producto(nombre, precio)
 
         elif opcion == "2":
-            identificador = input("Nombre o ID del producto a actualizar: ").strip()
-            nueva_cantidad = pedir_entero("Nueva cantidad: ")
-            inventario.actualizar_producto(identificador, nueva_cantidad)
+             identificador = input("Nombre o ID del producto a actualizar: ").strip()
+             nuevo_precio = float(input("Nuevo precio: "))
+             inventario.actualizar_precio_producto(identificador, nuevo_precio)
 
-        elif opcion == "3":
-            inventario.mostrar_inventario()
+        elif opcion == "3":   
+             inventario.mostrar_productos_y_detalles()
 
         elif opcion == "4":
-            identificador = input("Nombre o ID del producto: ").strip()
-            inventario.detalles_producto(identificador)
+             inventario.actualizar_cantidad_insumo()
 
         elif opcion == "5":
+             inventario.actualizar_cantidad_bebida()
+
+        elif opcion == "6":
             nombre = input("Nombre del insumo: ").strip()
             cantidad = pedir_entero("Cantidad disponible: ")
             precio = pedir_float("Precio del insumo: ")
             inventario.registrar_insumo(nombre, cantidad, precio)
 
-        elif opcion == "6":
+            
+
+        elif opcion == "7":
             nombre = input("Nombre de la bebida: ").strip()
             cantidad = pedir_entero("Cantidad disponible: ")
             precio = pedir_float("Precio de la bebida: ")
             inventario.registrar_bebida(nombre, cantidad, precio)
-
-        elif opcion == "7":
-            inventario.mostrar_insumos()
+            
 
         elif opcion == "8":
-            inventario.mostrar_bebidas()
+             inventario.mostrar_insumos()
 
         elif opcion == "9":
-            print("Saliendo del sistema...")
-            break
-
+             inventario.mostrar_bebidas()  
+            
+        elif opcion == "10":
+             print("Saliendo del sistema...")
+             break
         else:
             print("Opción no válida. Intente otra vez.")
 
