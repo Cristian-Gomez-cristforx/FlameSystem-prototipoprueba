@@ -106,7 +106,9 @@ class Inventario:
                 print(f"¡ERROR!: Ya existe un producto registrado con el nombre: {nombre}.")
                 return None
         
-
+        if not  self.insumos:
+            print("\n¡Alerta, NO hay insumos para agregar!. Primero registre insumos")
+            return None
         print("\n--- Lista de Insumos Disponibles ---")
         for ins in self.insumos.values():
             print(ins)
