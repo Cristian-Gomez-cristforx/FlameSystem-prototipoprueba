@@ -1,39 +1,73 @@
 import random
 from Modulos_Gestiones.Gestion_Usuario import Usuario,verificar_correo
-from Modulos_Gestiones.Gestion_Pedidos import Pedido,GestorPedidos
+from Modulos_Gestiones.Gestion_Pedidos import Pedido,GestorPedidos,LineaProducto,LineaBebida,agregar_producto_interactivo_a_pedido, agregar_bebida_interactivo_a_pedido, buscar_y_editar_por_tipo_interactivo, listar_pedidos_por_tipo_interactivo, crear_pedido_interactivo, menu_cocinero
 from Modulos_Gestiones.Inventario import Insumo,Bebida,Inventario,pedir_entero,pedir_float,menu_inventario
+
 from Modulos_Gestiones.Reportes import Reportes
 
 admin=Usuario("Felipe Dominguez","felipe@gmail.com","flamepipe7040","admin",1090350760,3134206754)
 Usuario.usuarios_registrados.append(admin)
 inventario = Inventario()
-gestor= GestorPedidos()
+gestor= GestorPedidos(inventario)
 def menu_mesero(permitir_cerrar_sesion=False,usuario_nombre=None):
                         Mensaje=f"--Bienvenido a su Menú de Mesero, Usuario {usuario_nombre}--" if usuario_nombre else "--Menú de Mesero--"
                         print(Mensaje)
                         while True:
-                             manejar_mens_op = "4. Cerrar Sesión" if permitir_cerrar_sesion else "4. Salir del menú"
-                             options = input(f"\n1. Registrar pedido\n2. Cancelar pedido\n3. Confirmar pago de pedido\n{manejar_mens_op}\nIngrese el número de la opción: ")
+                             manejar_mens_op = "0. Cerrar Sesión" if permitir_cerrar_sesion else "0. Salir del menú"
+                             print(f"\n--- Menú Mesero (usuario: {usuario_nombre}) ---")
+                             print("1. Crear pedido (flujo completo)")
+                             print("2. Buscar y editar pedido por TIPO (mesa/recoger/domicilio)")
+                             print("3. Ver mis pedidos (en construcción / enviados)")
+                             print("4. Ver pedidos activos (todos)")
+                             print("5. Ver historial (finalizados)")
+                             print(f"{manejar_mens_op}")
+                             options = input("Ingrese el número de la opción: ")
         
                              if options == "1":
-                                cliente = input("Nombre del cliente: ")
-                                total = pedir_entero("Total del pedido: ")
-                                print("Tipo de entrega: 1.Mesa  2.Domicilio  3.Recoger")
-                                tp = input("Seleccione tipo: ")
-                                tipos = {"1": "Mesa", "2": "Domicilio", "3": "Recoger"}
-                                tipo_entrega = tipos.get(tp, "Mesa")
-                                pedido = gestor.registrar_pedido(cliente, total, tipo_entrega)
-                                print("Pedido registrado:", pedido)
+                                pid = crear_pedido_interactivo(gestor,usuario_nombre)
+                                if pid:
+                                    print(f"Pedido creado y enviado (o en cola): ID {pid}")
+                                else:
+                                    print("Creación cancelada o no se creó pedido.")
+                                
                              elif options=="2":
-                                id_pedido=pedir_entero("ID del pedido a cancelar: ")
-                                ok = gestor.cancelar_pedido(id_pedido)
-                                print("Pedido cancelado." if ok else "Pedido no encontrado.")
+                                 buscar_y_editar_por_tipo_interactivo(gestor, usuario_nombre)
                                
                              elif options=="3":
-                                id_pedido=pedir_entero("ID del pedido a confirmar pago: ")
-                                ok = gestor.confirmar_pago(id_pedido)
-                                print("Pago confirmado." if ok else "Pedido no encontrado.")
+                               
+                                ps = gestor.listar_pedidos_por_mesero(usuario_nombre)
+                                if not ps:
+                                    print("No tienes pedidos en construcción o en cola.")
+                                else:
+                                    print("Tus pedidos (borradores/en cola):")
+                                    for p in sorted(ps, key=lambda x: x.id_pedido):
+                                         print(p.resumen())
+                                    try:
+                                        sel = input("Ingrese ID para ver detalles o ENTER para volver: ").strip()
+                                        if sel:
+                                             pid = int(sel)
+                                             p = gestor.obtener_pedido(pid)
+                                             if p and p.mesero.lower() == usuario_nombre.lower():
+                                                 p.detalles()
+                                             else:
+                                                print("Pedido no encontrado o no es tuyo.")
+                                    except:
+                                         print("ID inválido.")
                              elif options=="4":
+                                  activos = gestor.listar_pedidos_activos()
+                                  if not activos:
+                                       print("No hay pedidos activos.")
+                                  else:
+                                       for p in sorted(activos, key=lambda x: x.id_pedido):
+                                           print(p.resumen())
+                             elif options == "5":
+                                  hist = gestor.ver_historial()
+                                  if not hist:
+                                       print("No hay pedidos finalizados.")
+                                  else:
+                                       for p in hist:
+                                            print(f"{p.resumen()} -> {p.fecha_finalizacion}")   
+                             elif option== "0":
                                  if permitir_cerrar_sesion:
                                    print("Cerrando sesión...")
                                    return True
@@ -117,5 +151,9 @@ while True:
                      if menu_mesero(permitir_cerrar_sesion=True, usuario_nombre=usuario_login.nombre):
                         usuario_deicidio_salir = True
                         break
+                elif usuario_login.rol.lower()=="cocinero":
+                     if  menu_cocinero(gestor, usuario_login):
+                          usuario_deicidio_salir=True
+                          break
                 elif usuario_deicidio_salir:
                      break

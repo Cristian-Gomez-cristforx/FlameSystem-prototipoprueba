@@ -365,7 +365,7 @@ def menu_inventario(inventario):
         else:
             print("Opción no válida. Intente otra vez.")
 
-menu_inventario(inventario)
+
 
 
 
